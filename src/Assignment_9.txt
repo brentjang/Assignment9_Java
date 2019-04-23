@@ -1,0 +1,431 @@
+// this program takes am array of student objects
+// and sorts them according to different criteria
+// also computes the median of points based
+// on the criteria
+public class Foothill
+{
+   public static void main (String[] args)
+   {
+      // contains 16 students
+      Student[] array = 
+      { 
+         new Student("Jang","Brent", 300),
+         new Student("Jang","Kyle", 231),
+         new Student("Jung","Kyle", 161),
+         new Student("Sun","Carlos", 90),
+         new Student("2Chin","Monica", 128),
+         new Student("Karamdashti","Kian", 625),
+         new Student("Levy","Sam", 30),
+         new Student("Segal","Jacob", 400),
+         new Student("McClellan","Malcolm", 395),
+         new Student("Hobbs","John", 510),
+         new Student("Santana","Hector", 108),
+         new Student("Wang","Heidi", 235),
+         new Student("Lee","Bryan", 100),
+         new Student("Murai","Terri", 452),
+         new Student("Shen","Matthew", 123),
+         new Student("Tran","Melissa", 321),
+      };
+      
+      // contains 15 students
+      Student[] array2 = 
+      { 
+         new Student("Jang","Brent", 300),
+         new Student("Jang","Kyle", 231),
+         new Student("Jung","Kyle", 161),
+         new Student("Sun","Carlos", 90),
+         new Student("Chin","Monica", 128),
+         new Student("Karamdashti","Kian", 625),
+         new Student("Levy","Sam", 30),
+         new Student("Segal","Jacob", 400),
+         new Student("McClellan","Malcolm", 395),
+         new Student("Hobbs","John", 510),
+         new Student("Santana","Hector", 108),
+         new Student("Wang","Heidi", 235),
+         new Student("Lee","Bryan", 100),
+         new Student("Murai","Terri", 452),
+         new Student("Shen","Matthew", 123),
+      };
+      
+      // contains 1 student
+      Student[] array3 = 
+      { 
+         new Student("Jang","Brent", 300),
+      };
+      
+      // contains 0 students
+      Student[] array4 = {};
+      
+      
+      // new object for sorting
+      StudentArrayUtilities newStudents = new StudentArrayUtilities();
+
+      // before any sorting using 16 students
+      System.out.println(newStudents.toString
+            (("Start: "), array));
+
+      // sorts by last name
+      newStudents.arraySort(array);
+      System.out.println(newStudents.toString
+            (("Sort by Last Name: "), array));
+
+      // sorts by first name
+      Student.setSortKey(Student.SORT_BY_FIRST);
+      newStudents.arraySort(array);
+      System.out.println(newStudents.toString
+            (("Sort by First Name: "), array));
+
+      // sorts by points
+      Student.setSortKey(Student.SORT_BY_POINTS);
+      newStudents.arraySort(array);
+      System.out.println(newStudents.toString
+            (("Sort by Points: "), array));
+
+      // test median by First Name for all sizes
+      Student.setSortKey(Student.SORT_BY_FIRST);
+      System.out.println("Sort Key is: " + Student.getSortKey() + "\n"); 
+      
+      System.out.println("Median of Class (size " + 
+         array.length + ") = " + 
+            newStudents.getMedianDestructive(array) + "\n");
+      System.out.println("Median of Class (size "  + 
+         array2.length + ") = " + 
+            newStudents.getMedianDestructive(array2) + "\n");
+      System.out.println("Median of Class (size " + 
+         array3.length + ") = " + 
+            newStudents.getMedianDestructive(array3) + "\n");
+      System.out.println("Median of Class (size " + 
+         array4.length + ") = " + 
+            newStudents.getMedianDestructive(array4) + "\n");
+   }
+}
+
+// contains student constructor and sorting methods
+class Student
+{
+   // constants that can be changed by user
+   public static final String DEFAULT_NAME = "zz-error";
+   public static final int DEFAULT_POINTS = 0;
+   public static final int MAX_POINTS = 1000;
+   public static final int SORT_BY_FIRST = 88;
+   public static final int SORT_BY_LAST = 98;
+   public static final int SORT_BY_POINTS = 108;
+   private static int sortKey = SORT_BY_LAST;
+   
+   // private variables
+   private String lastName;
+   private String firstName;
+   private int totalPoints;
+
+   // constructor requires parameters - no default supplied
+   public Student(String last, String first, int points)
+   {
+      if (setLastName(last) == false)
+      {
+         lastName = DEFAULT_NAME;
+      }
+      if (setFirstName(first) == false)
+      {
+         firstName = DEFAULT_NAME;
+      }
+      if (setPoints(points) == false)
+      {
+         totalPoints = DEFAULT_POINTS;
+      }
+   }
+
+   // sets last name
+   public boolean setLastName(String last)
+   {
+      if (validString(last) == false)
+      {
+         return false;
+      }
+      lastName = last;
+      return true;
+   }
+
+   // sets first name
+   public boolean setFirstName(String first)
+   {
+      if (validString(first) == false)
+      {
+         return false;
+      }
+      firstName = first;
+      return true;
+   }
+
+   // set points
+   public boolean setPoints(int points)
+   {
+      if (validPoints(points) == false)
+      {
+         return false;
+      }
+      totalPoints = points;
+      return true;
+   }
+
+   // sets the sorting key value
+   public static boolean setSortKey(int key)
+   {
+      if ( !(key == SORT_BY_FIRST || key == SORT_BY_LAST
+            || key == SORT_BY_POINTS) )
+      {
+         return false;
+      }
+      sortKey = key;
+      return true;
+   }
+   
+   // returns last name
+   public String getLastName() 
+   { 
+      return lastName; 
+   }
+   
+   // returns first name
+   public String getFirstName() 
+   { 
+      return firstName; 
+   }
+   
+   // return total points
+   public int getTotalPoints() 
+   { 
+      return totalPoints; 
+   }
+   
+   // return sorting key value
+   public static int getSortKey() 
+   { 
+      return sortKey; 
+   }
+
+   // compares two students based on the sorting key
+   public static int compareTwoStudents
+      (Student firstStudent, Student secondStudent)
+   {
+      int result;
+      // switch statement for each sort value
+      switch (sortKey)
+      {
+      case SORT_BY_FIRST:
+         result = firstStudent.firstName.compareToIgnoreCase
+         (secondStudent.firstName);
+         break;
+      case SORT_BY_LAST:
+         result = firstStudent.lastName.compareToIgnoreCase
+         (secondStudent.lastName);
+         break;
+      default:
+         result = firstStudent.totalPoints - secondStudent.totalPoints;
+         break;
+      }
+      return result;
+   }
+
+   // formats output for each string
+   public String toString()
+   {
+      String resultString;
+      resultString = (" " + lastName
+            + ", " + firstName
+            + " points: " + totalPoints
+            + "\n");
+      return resultString;
+   }
+
+   // checks for a not null, non number string
+   private static boolean validString(String string)
+   {
+      if (!Character.isLetter(string.charAt(0)) || string == null)
+      {
+         return false;
+      }
+      return true;
+   }
+
+   // must be non-negative and less than max points
+   private static boolean validPoints(int points)
+   {
+      if (points < 0 || points > MAX_POINTS)
+      {
+         return false;
+      }
+      return true;
+   }
+}
+
+// contains sorting and computational methods
+class StudentArrayUtilities
+{
+   // prints the roster in full
+   public String toString(String title, Student[] data)
+   {
+      String result = title + "\n";
+
+      // build the output string from the individual Students:
+      for (int i = 0; i < data.length; i++)
+      {
+         result += " "+ data[i].toString();
+      }
+      return result;
+   }
+
+   // returns true if a modification was made to the array
+   private boolean floatLargestToTop(Student[] array, int top)
+   {
+      boolean flag = false;
+      Student temp;
+
+      // compare with client call to see where the loop stops
+      for (int k = 0; k < top; k++)
+         if (Student.compareTwoStudents(array[k], array[k+1]) > 0)
+         {
+            temp = array[k];
+            array[k] = array[k+1];
+            array[k+1] = temp;
+            flag = true;
+         }
+      return flag;
+   }
+
+   // callable arraySort() - assumes Student class has a compareTo()
+   public void arraySort(Student[] array)
+   {
+      for (int k = 0; k < array.length; k++)
+      {
+         // compare with method def to see where inner loop stops
+         if ( !floatLargestToTop(array, array.length - 1 - k) )
+         {
+            return;
+         }
+      }
+   }
+   
+   // returns the median points for given array
+   public double getMedianDestructive(Student[] array)
+   {
+      double med;
+
+      // if length 0
+      if (array.length == 0)
+      {
+         return 0;
+      }
+      
+      // if length 1
+      if (array.length == 1)
+      {
+         return array[0].getTotalPoints();
+      }
+
+      // changes to sort by points
+      int key = Student.getSortKey();
+      Student.setSortKey(Student.SORT_BY_POINTS);
+      arraySort(array);
+
+      // checks if an odd or even length array
+      if (array.length % 2 == 0)
+      {
+         med = (array[array.length / 2 - 1].getTotalPoints() +
+               array[array.length / 2].getTotalPoints()) / 2.0;
+      }
+      else
+      {
+         med = array[array.length / 2].getTotalPoints();
+      }
+      // sets back to last sort key value
+      Student.setSortKey(key);
+      return med;
+   }
+}
+
+
+/*
+\\\\\\\\\\\\\\\\\\\\\\\\\\ PASTED OUTPUT //////////////////////// 
+
+ Start: 
+   Jang, Brent points: 300
+   Jang, Kyle points: 231
+   Jung, Kyle points: 161
+   Sun, Carlos points: 90
+   zz-error, Monica points: 128
+   Karamdashti, Kian points: 625
+   Levy, Sam points: 30
+   Segal, Jacob points: 400
+   McClellan, Malcolm points: 395
+   Hobbs, John points: 510
+   Santana, Hector points: 108
+   Wang, Heidi points: 235
+   Lee, Bryan points: 100
+   Murai, Terri points: 452
+   Shen, Matthew points: 123
+   Tran, Melissa points: 321
+
+ Sort by Last Name: 
+   Hobbs, John points: 510
+   Jang, Brent points: 300
+   Jang, Kyle points: 231
+   Jung, Kyle points: 161
+   Karamdashti, Kian points: 625
+   Lee, Bryan points: 100
+   Levy, Sam points: 30
+   McClellan, Malcolm points: 395
+   Murai, Terri points: 452
+   Santana, Hector points: 108
+   Segal, Jacob points: 400
+   Shen, Matthew points: 123
+   Sun, Carlos points: 90
+   Tran, Melissa points: 321
+   Wang, Heidi points: 235
+   zz-error, Monica points: 128
+
+ Sort by First Name: 
+   Jang, Brent points: 300
+   Lee, Bryan points: 100
+   Sun, Carlos points: 90
+   Santana, Hector points: 108
+   Wang, Heidi points: 235
+   Segal, Jacob points: 400
+   Hobbs, John points: 510
+   Karamdashti, Kian points: 625
+   Jang, Kyle points: 231
+   Jung, Kyle points: 161
+   McClellan, Malcolm points: 395
+   Shen, Matthew points: 123
+   Tran, Melissa points: 321
+   zz-error, Monica points: 128
+   Levy, Sam points: 30
+   Murai, Terri points: 452
+
+ Sort by Points: 
+   Levy, Sam points: 30
+   Sun, Carlos points: 90
+   Lee, Bryan points: 100
+   Santana, Hector points: 108
+   Shen, Matthew points: 123
+   zz-error, Monica points: 128
+   Jung, Kyle points: 161
+   Jang, Kyle points: 231
+   Wang, Heidi points: 235
+   Jang, Brent points: 300
+   Tran, Melissa points: 321
+   McClellan, Malcolm points: 395
+   Segal, Jacob points: 400
+   Murai, Terri points: 452
+   Hobbs, John points: 510
+   Karamdashti, Kian points: 625
+
+ Sort Key is: 88
+
+ Median of Class (size 16) = 233.0
+
+ Median of Class (size 15) = 231.0
+
+ Median of Class (size 1) = 300.0
+
+ Median of Class (size 0) = 0.0
+ */
